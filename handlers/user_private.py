@@ -1,14 +1,12 @@
 import asyncio
-import os
-from aiogram import Bot, Dispatcher, types, Router, F
+
+from aiogram import types, Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message
+from aiogram.types import LabeledPrice
 
 from buttons.inline_kb import *
+from config import bot, PAYMENT_PROVIDER_TOKEN, MANAGER
 
-dp = Dispatcher()
-
-# Создаем Router для регистрации обработчиков
 user_private_router = Router()
 
 
@@ -46,7 +44,6 @@ async def show_warnings(callback_query: types.CallbackQuery):
     # Повторная отправка клавиатуры через 30 секунд
     await callback_query.message.answer("Если вы ознакомились с предостережениями, давайте продолжим",
                                         reply_markup=commands_keyboard)
-
 
 
 @user_private_router.callback_query(F.data == "show_symptoms")
@@ -471,3 +468,50 @@ async def show_treatment(callback_query: types.CallbackQuery):
     )
     await callback_query.message.answer(text, parse_mode="Markdown")
     await callback_query.answer()
+
+
+@user_private_router.callback_query(F.data == "say_thank_you")
+async def send_payment_invoice(callback_query: types.CallbackQuery):
+    prices = [
+        LabeledPrice(label="Символическая благодарность", amount=10000)  # 100 копеек = 1 грн
+    ]
+
+    await bot.send_invoice(
+        chat_id=callback_query.from_user.id,
+        title="Спасибо за вашу поддержку!",
+        description="Оплата 100 UAH (символическая благодарность)❤️",
+        payload="unique_payload",  # Любая строка для идентификации платежа
+        provider_token=PAYMENT_PROVIDER_TOKEN,
+        currency="UAH",  # Валюта
+        prices=prices,
+        start_parameter="thank_you_support",  # Уникальный параметр
+    )
+    # Уведомляем Telegram о закрытии окна с кнопкой
+    await callback_query.answer()
+
+
+@user_private_router.pre_checkout_query()
+async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery):
+    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+
+@user_private_router.message(F.content_type == "successful_payment")
+async def payment_successful(message: types.Message):
+    await message.answer("Спасибо за вашу поддержку! Ваш платеж успешно прошел.")
+
+    await sending_thank_you_report_to_manager(message)
+
+
+async def sending_thank_you_report_to_manager(callback_query: types.CallbackQuery):
+    """
+    Отправляет сообщение в группу после оплаты.
+    """
+    user_name = callback_query.from_user.full_name  # Имя пользователя
+    user_id = callback_query.from_user.id  # ID пользователя
+
+    text = (
+        f"Пользователь {user_name} (ID: {user_id}) сказал 'Спасибо' "
+        "и оплатил символическую поддержку."
+    )
+
+    await bot.send_message(chat_id=MANAGER, text=text)

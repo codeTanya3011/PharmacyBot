@@ -1,16 +1,15 @@
 from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup)
 
-
 commands_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Предостережения! Обязательно к прочтению!", callback_data="show_warnings")],
     [InlineKeyboardButton(text="Симптомы", callback_data="show_symptoms"),
      InlineKeyboardButton(text="Лечение", callback_data="show_treatment")],
     [InlineKeyboardButton(text="Детям", callback_data="show_children"),
      InlineKeyboardButton(text="Сайт с инструкциями", url="https://tabletki.ua/ru/")],
-    [InlineKeyboardButton(text="Отзывы", url="https://t.me/pharmacy_group5")],
-    [InlineKeyboardButton(text="Обратная связь", url="https://t.me/sweet_girl_669")]
+    [InlineKeyboardButton(text="Отзывы", url="https://t.me/pharmacy_group5"),
+     InlineKeyboardButton(text="Обратная связь", url="https://t.me/sweet_girl_669")],
+    [InlineKeyboardButton(text="Спасибо за помощь!", callback_data="say_thank_you")]
 ])
-
 
 treatment_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Важно! Рекомендую к прочтению!", callback_data="important")],
@@ -24,7 +23,6 @@ treatment_keyboard = InlineKeyboardMarkup(inline_keyboard=[
      InlineKeyboardButton(text="(37-43)", callback_data="numbering_eight")],
     [InlineKeyboardButton(text="Вернуться к главному меню", callback_data="back_to_main")]
 ])
-
 
 children_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="Важно! Рекомендую к прочтению!", callback_data="important_kids")],

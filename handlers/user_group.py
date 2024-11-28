@@ -1,6 +1,6 @@
 from string import punctuation
 
-from aiogram import F, types, Router
+from aiogram import types, Router
 from common.restricted_words import restricted_words
 from filters.chat_types import ChatTypeFilter
 
