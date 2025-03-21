@@ -497,7 +497,7 @@ async def process_pre_checkout_query(pre_checkout_query: types.PreCheckoutQuery)
 
 @user_private_router.message(F.content_type == "successful_payment")
 async def payment_successful(message: types.Message):
-    await message.answer("Спасибо за вашу поддержку! Ваш платеж успешно прошел.")
+    await message.answer("Спасибо за вашу поддержку! Ваш платеж успешно прошел❤️")
 
     await sending_thank_you_report_to_manager(message)
 

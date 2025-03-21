@@ -1,1 +1,7 @@
 .env
+#python stuff
+.venv/
+__pycache__/
+
+#ide stuff
+.idea
